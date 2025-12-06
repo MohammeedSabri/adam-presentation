@@ -105,10 +105,11 @@ def train_model(df, model_type):
 
 # --- LOAD BACKGROUND ---
 bg_b64 = get_base64_image('background.webp')
-if bg_b64:
+try:
+    bg_b64 = get_base64_image('background.webp')
     load_css(bg_b64)
-else:
-    st.warning("⚠️ 'background.webp' not found. Using default dark mode.")
+except Exception as e:
+    st.warning("Using default styling (background image not found)")
 
 # --- 5. NAVIGATION ---
 SLIDES = {
@@ -360,6 +361,7 @@ For each iteration:
             | With Momentum | 0.084 | Much faster! |
             """)
 
+
     # --- 2. Gradient Descent with Momentum ---
     elif concept == 'Gradient Descent with Momentum':
         st.header("2. Gradient Descent with Momentum: Adding Velocity")
@@ -609,6 +611,7 @@ for each iteration:
             """)
     
         st.markdown("**Solution:** RMSprop (and later Adam) fix this by using moving averages instead of sums!")
+   
 
     # --- 4. Adam Optimizer ---
     elif concept == 'Adam Optimizer':
@@ -844,7 +847,7 @@ for each iteration:
             | **RMSprop** | Moving average | Dying LR | No momentum |
             | **Adam** | Momentum + RMSprop | All above | - |
             """)
-    
+
     # Navigation helper
     st.markdown("---")
     col_nav1, col_nav2, col_nav3 = st.columns(3)
@@ -862,9 +865,7 @@ for each iteration:
             if st.button(f"Next: {concepts[concept_index[concept] + 1]} →"):
                 st.session_state.concept_index = min(3, concept_index[concept] + 1)
 
-# Note: To make navigation work, you might need to add to your session state
-if 'concept_index' not in st.session_state:
-    st.session_state.concept_index = 0
+
 
 
 
