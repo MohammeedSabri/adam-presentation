@@ -1207,11 +1207,12 @@ elif curr_key == "08":
         # --- 5. Visualization ---
         fig = go.Figure()
 
-        # Define consistent colors
-        colors = ['#EF553B', '#00CC96', '#636EFB'] 
+        # UPDATED COLORS: Vibrant Neon for visibility on Dark Mode
+        # Cluster A = Red, Cluster B = Green, Cluster C = Blue
+        colors = ['#FF2B2B', '#00FF55', '#3399FF'] 
         symbols = {'Cluster A': 'circle', 'Cluster B': 'diamond', 'Cluster C': 'square'}
         
-        # Plot Decision Regions (Low Opacity)
+        # Plot Decision Regions (The Grid Points)
         for cls_name, cls_idx in label_map.items():
             mask = grid_preds == cls_idx
             pts = grid_pts[mask]
@@ -1219,19 +1220,21 @@ elif curr_key == "08":
                 fig.add_trace(go.Scatter3d(
                     x=pts[:,0], y=pts[:,1], z=pts[:,2],
                     mode='markers',
-                    marker=dict(size=3, color=colors[cls_idx], opacity=0.1),
-                    name=f"Region: {cls_name}",
+                    # Increased Size (4) and Opacity (0.2) for clearer regions
+                    marker=dict(size=4, color=colors[cls_idx], opacity=0.2),
+                    name=f"Zone: {cls_name}",
                     showlegend=False
                 ))
 
-        # Plot Actual Data Points (High Opacity)
+        # Plot Actual Data Points (Solid, Bright)
         for cat in df['category'].unique():
             subset = df[df['category'] == cat]
             idx = label_map[cat]
             fig.add_trace(go.Scatter3d(
                 x=subset['x'], y=subset['y'], z=subset['z'],
                 mode='markers',
-                marker=dict(size=6, symbol=symbols[cat], color=colors[idx], line=dict(width=1, color='white'), opacity=1.0),
+                # Size 7 with white outline for maximum contrast
+                marker=dict(size=7, symbol=symbols[cat], color=colors[idx], line=dict(width=2, color='white'), opacity=1.0),
                 name=cat
             ))
 
@@ -1239,7 +1242,15 @@ elif curr_key == "08":
             title=f"3D Clusters & Decision Boundaries ({clf_type})",
             height=700,
             template="plotly_dark",
-            scene=dict(xaxis_title='X', yaxis_title='Y', zaxis_title='Z', aspectmode='cube'),
+            scene=dict(
+                xaxis_title='X', 
+                yaxis_title='Y', 
+                zaxis_title='Z', 
+                aspectmode='cube',
+                xaxis=dict(showgrid=False), # Cleaner look
+                yaxis=dict(showgrid=False),
+                zaxis=dict(showgrid=False)
+            ),
             margin=dict(l=0, r=0, b=0, t=50)
         )
 
@@ -1251,7 +1262,6 @@ elif curr_key == "08":
         st.info("Adjust the settings in the sidebar and click '🚀 Train & Visualize' to generate the 3D decision boundary plot.")
         st.markdown('<div class="glass-card">Visualizing how an optimized classifier draws decision boundaries in 3D space.</div>', unsafe_allow_html=True)
         st.image("https://placehold.co/700x350/236B8E/FFF?text=3D+Classification+Decision+Boundary", caption="Visualization will appear here after training.")
-
 
 # === SLIDE 9: CONCLUSION ===
 elif curr_key == "09":
