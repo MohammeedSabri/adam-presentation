@@ -281,10 +281,10 @@ elif curr_key == "04":
         
         with col2:
             st.markdown("#### Visual Analogy")
-            st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Gradient_descent.gif/400px-Gradient_descent.gif", 
-                    caption="Standard GD: Small steps near minimum")
         
-        st.markdown("---")
+            st.image("https://miro.medium.com/v2/resize:fit:640/format:webp/1*R6uLbf77M3_KmTyx-B_-vw.gif", 
+                    caption="Standard GD: Small steps near minimum")
+            st.markdown("---")
         
         # Algorithm and Example in columns
         col_algo, col_example = st.columns(2)
@@ -389,7 +389,7 @@ For each iteration:
             - Energy accumulates
             """)
             
-            st.image("https://miro.medium.com/v2/resize:fit:1400/1*_91D77EBB6ESV-9lb6xTjA.gif", 
+            st.image("https://www.cs.us.es/~fsancho/Blog/posts/Matematicas_Redes_Neuronales/img/sgd_with_momentum2.gif", 
                     caption="Momentum helps overcome local minima")
         
         with col2:
@@ -579,30 +579,36 @@ for each iteration:
                 """)
         
         # The Fatal Flaw
-        with st.expander("⚠️ **The Fatal Flaw: Dying Learning Rate Problem**", expanded=True):
+
+        # The Fatal Flaw
+        with st.expander("⚠️ **The Fatal Flaw: Dying Learning Rate Problem**"):
             st.markdown("""
-            ### 💀 **Why AdaGrad Eventually Fails**
+                    **Why AdaGrad Eventually Fails:**
             
             **The Problem:** $g_{t}^2$ only accumulates, never decreases!
             
             **Mathematically:**
-            $g_{t}^2 = g_{t-1}^2 + (\nabla f_t)^2$
+            $g_{t}^2 = g_{t-1}^2 + (\\nabla f_{t})^2$
             
             As $t \\rightarrow \\infty$, $g_{t}^2 \\rightarrow \\infty$
             
-            Then: adaptive_lr = $\\frac{\\alpha}{\\sqrt{\\infty + \\epsilon}} \\rightarrow 0$
+            Then: adaptive_lr = $\\frac{\\alpha}{\\sqrt{g_{t}^2 + \\epsilon}} \\rightarrow 0$
             
-            **Consequence:** All learning rates shrink to zero → training stops prematurely!
+            **Consequence:** All learning rates shrink to zero → training stops prematurely!""")
             
-            **Visualization:**
-            ```
-            Time:  |---|-----|--------|----------------|-------------------------|
-            g²:    | 1 | 10  | 100    | 1000           | 10000                   |
-            LR:    | 1 | 0.3 | 0.1    | 0.03           | 0.01 → 0.001 → 0.0001...|
-            ```
-            
-            **Solution:** RMSprop (and later Adam) fix this by using moving averages instead of sums!
+            # Visualization table
+            st.markdown("#### 📈 Visualization of Learning Rate Decay")
+            st.markdown("""
+            | Time | g² | Learning Rate |
+            |------|----|---------------|
+            | t=1 | 1 | 1.0 |
+            | t=2 | 10 | 0.3 |
+            | t=3 | 100 | 0.1 |
+            | t=4 | 1000 | 0.03 |
+            | t=5 | 10000 | 0.01 → 0! |
             """)
+    
+        st.markdown("**Solution:** RMSprop (and later Adam) fix this by using moving averages instead of sums!")
 
     # --- 4. Adam Optimizer ---
     elif concept == 'Adam Optimizer':
@@ -632,11 +638,32 @@ for each iteration:
             ✅ No cold start (Bias correction)
             """)
             
-            st.metric("Default Hyperparameters", "Well-tuned out of the box!")
-            st.markdown("- $\\beta_1 = 0.9$ (Momentum memory)")
-            st.markdown("- $\\beta_2 = 0.999$ (Squared gradient memory)")
-            st.markdown("- $\\alpha = 0.001$ (Learning rate)")
-            st.markdown("- $\\epsilon = 10^{-8}$ (Numerical stability)")
+            # Complete Adam Equations
+            st.markdown("#### 📝 **Adam Update Equations**")
+            st.markdown("""
+            **1. Compute first moment (momentum):**
+            $$m_t = \\beta_1 m_{t-1} + (1 - \\beta_1) g_t$$
+            
+            **2. Compute second moment (RMSprop):**
+            $$v_t = \\beta_2 v_{t-1} + (1 - \\beta_2) g_t^2$$
+            
+            **3. Bias correction for first moment:**
+            $$\\hat{m}_t = \\frac{m_t}{1 - \\beta_1^t}$$
+            
+            **4. Bias correction for second moment:**
+            $$\\hat{v}_t = \\frac{v_t}{1 - \\beta_2^t}$$
+            
+            **5. Parameter update:**
+            $$\\theta_t = \\theta_{t-1} - \\alpha \\cdot \\frac{\\hat{m}_t}{\\sqrt{\\hat{v}_t} + \\epsilon}$$
+            """)
+            
+            st.markdown("#### ⚙️ **Default Hyperparameters**")
+            st.markdown("""
+            - $\\beta_1 = 0.9$ (Momentum memory)
+            - $\\beta_2 = 0.999$ (Squared gradient memory)
+            - $\\alpha = 0.001$ (Learning rate)
+            - $\\epsilon = 10^{-8}$ (Numerical stability)
+            """)
         
         with col_visual:
             st.image("https://ruder.io/content/images/2016/09/contours_evaluation_optimizers.gif",
